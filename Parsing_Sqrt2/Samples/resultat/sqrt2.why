@@ -1,0 +1,31 @@
+use int.Int
+use ref.Ref
+axiom lt_mult : forall  x y : int. 0 <= x -> 0 <= y -> (x < y <-> x * x < y * y ) 
+
+val sqrt2_spec (x r h  : ref int) : () 
+requires { 0 <= !r }
+  requires { !r + 1 < !h }
+  requires { !r * !r <= !x < !h * !h }
+ reads {x,r,h}
+ writes {r,h }
+ensures {0 <= !r}
+ ensures {0 <= !h}
+ ensures {old !r * old !r <= !r * !r <= !x < !h * !h <= old !h * old !h}
+ensures { !h - !r < old !h - !r }
+  ensures { !x = old !x }
+ 
+let sqrt (x r h  : ref int) : () 
+ requires { !x >= 0 }
+ requires { !r >= 0 }
+ requires { !r+1 <= !h }
+ requires { !r * !r <= !x < !h * !h }
+ reads {x,r,h}
+ writes {r,h }
+ ensures { (old !r)* (old !r)<= !r * !r <= !x < (!r + 1) * (!r + 1)<= (old !h)* (old !h) }
+ ensures {  !x =  old !x }
+=
+ while !h <> !r + 1 do
+  invariant {0 <= !r /\ 0 <= !h /\  old !r *  old !r <= !r * !r <= !x < !h * !h <=  old !h *  old !h}
+  variant {!h - !r}
+  sqrt2_spec x r h
+done

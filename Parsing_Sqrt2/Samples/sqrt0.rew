@@ -1,0 +1,9 @@
+use int.Int
+use ref.Ref
+
+let sqrt (x : ref int) : int = 
+  requires { x >= 0 }
+  writes { x }
+  ensures { result * result <= x <= (result + 1) * (result + 1) }
+  ensures { !x = old !x }
+= <>

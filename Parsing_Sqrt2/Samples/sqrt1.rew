@@ -1,0 +1,16 @@
+use int.Int
+use ref.Ref
+
+let sqrt (x : ref int) : int = 
+  requires { x >= 0 }
+  writes { x }
+  ensures { result * result <= x <= (result + 1) * (result + 1) }
+  ensures { !x = old !x }
+= let r = ref 0 in
+  let h = ref (x + 1) in
+  spec requires { !r >= 0 }
+       requires { !h >= 0 }
+       ensures { (old !r) * (old !r) <= (!r * !r) <= x < (!r + 1) * (!r + 1) <= h * h }
+       writes {r, h}
+  = <>
+    !r

@@ -1,0 +1,29 @@
+use int.Int
+use ref.Ref
+
+val sqrt_spec (x : ref int) : int
+ requires { !x >= 0 }
+ writes { x }
+ ensures { result * result <= !x <= (result + 1) * (result + 1) }
+ ensures { !x =  old !x }
+ 
+let sqrt (x : ref int) : int
+ requires { !x >= 0 }
+ writes { x }
+ ensures { result * result <= !x <= (result + 1) * (result + 1) }
+ ensures { !x =  old !x }
+= sqrt_spec xuse int.Int
+use ref.Ref
+
+val sqrt_spec (x : ref int) : int
+ requires { !x >= 0 }
+ writes { x }
+ ensures { result * result <= !x <= (result + 1) * (result + 1) }
+ ensures { !x =  old !x }
+ 
+let sqrt (x : ref int) : int
+ requires { !x >= 0 }
+ writes { x }
+ ensures { result * result <= !x <= (result + 1) * (result + 1) }
+ ensures { !x =  old !x }
+= sqrt_spec x

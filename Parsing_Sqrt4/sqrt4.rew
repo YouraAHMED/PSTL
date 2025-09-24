@@ -1,0 +1,37 @@
+use int.Int
+use ref.Ref
+
+(* axiome nécessaire pour why *)
+axiom lt_mult : forall x y : int. 0 <= x -> 0 <= y -> (x < y <-> x*x < y*y)
+
+let sqrt (x : ref int) : int = 
+  requires { x >= 0 }
+  writes { x }
+  ensures { result * result <= x <= (result + 1) * (result + 1) }
+  ensures { !x = old !x }
+= let r = ref 0 in
+  let h = ref (x + 1) in
+  spec requires { !r >= 0 }
+       requires { !h >= 0 }
+       ensures { (old !r) * (old !r) <= (!r * !r) <= x < (!r + 1) * (!r + 1) <= h * h }
+       writes {r, h}
+  = (* Introduce loop. *)
+    while !h <> !r + 1 do 
+      invariant { 0 <= !r /\ 0 <= !h /\ old !r * old !r <= !r * !r <= !x < !h * !h <= old !h * old !h }
+      variant { !h - !r }
+      (* Apply the dichotomie technique. *)
+      let m = ref 0 in
+      spec requires { !r + 1 < !h }
+           reads {r,m,h}
+           writes { m }
+           ensures { !r < !m < !h }
+      = (* Select pivot. *)
+         m := !r + (div (!h - !r) 2)
+
+      if !m * !m < !x then r:= !m
+      else if !m * !m > !x then h := !m
+      else (
+        r := !m;
+        h := !m + 1)
+    done
+    !r
